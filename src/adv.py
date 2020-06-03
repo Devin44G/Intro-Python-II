@@ -53,13 +53,36 @@ player = Player(room['outside'])
 #
 # If the user enters "q", quit the game.
 def game_loop():
-    print(player.location)
+    print(f'\n {player.curr_location} \n')
 
     player_input = input(
-        '''
-        Where to you want to go? Type [n] North, [s] South, [e] East,
-        [w] West . . .
+        '''\n
+        Where do you want to go?
+        Choose [n]:North, [s]:South, [e]:East, [w]:West . . .
+        Or press [q] to quit!\n
         ''').lower()
+
+    if len(player_input) == 0:
+        print('Please choose a direction')
+        game_loop()
+
+    if len(player_input) == 1:
+        if player_input == 'q':
+            print('You have quit the game. See ya next time!')
+        elif player_input == 'n':
+            player.curr_location = player.curr_location.n_to
+            game_loop()
+        elif player_input == 's':
+            player.curr_location = player.curr_location.s_to
+            game_loop()
+        elif player_input == 'e':
+            player.curr_location = player.curr_location.e_to
+            game_loop()
+        elif player_input == 'w':
+            player.curr_location = player.curr_location.w_to
+            game_loop()
+        else:
+            print('You can\'t go that direction!')
 
 
 game_loop()

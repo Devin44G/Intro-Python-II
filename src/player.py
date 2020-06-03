@@ -3,5 +3,5 @@
 class Player:
     """docstring for Player."""
 
-    def __init__(self, location):
-        self.location = location
+    def __init__(self, curr_location):
+        self.curr_location = curr_location
