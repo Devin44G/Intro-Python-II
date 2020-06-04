@@ -22,6 +22,7 @@ chamber! Sadly, it has already been completely emptied by
 earlier adventurers. The only exit is to the south."""),
 }
 
+room['outside'].add_item('sword')
 
 # Link rooms together
 
@@ -34,57 +35,58 @@ room['narrow'].w_to = room['foyer']
 room['narrow'].n_to = room['treasure']
 room['treasure'].s_to = room['narrow']
 
-#
-# Main
-#
-
-# Make a new player object that is currently in the 'outside' room.
 
 player = Player(room['outside'])
 
-# Write a loop that:
-#
-# * Prints the current room name
-# * Prints the current description (the textwrap module might be useful here).
-# * Waits for user input and decides what to do.
-#
-# If the user enters a cardinal direction, attempt to move to the room there.
-# Print an error message if the movement isn't allowed.
-#
-# If the user enters "q", quit the game.
-def game_loop():
-    print(f'\n {player.curr_location} \n')
 
+def try_direction(player, direction):
+    attr = direction + '_to'
+
+    if hasattr(player.curr_location, attr):
+        player.curr_location = getattr(player.curr_location, attr)
+    else:
+        print('You can\'t go in that direction!')
+
+
+# THE GAME LOOP
+playing = True
+
+while playing:
+    # PRINTS PLAYER'S CURRENT LOCATION EACH TIME LOOP IN INVOKED
+    print(f'\n {player.curr_location.description} \n')
+
+    # WAITING FOR PLAYER INPUT
     player_input = input(
         '''\n
         Where do you want to go?
         Choose [n]:North, [s]:South, [e]:East, [w]:West . . .
         Or press [q] to quit!\n
-        ''').lower()
+        ''').lower().split(' ')
 
+    # IF PLAYER DOESN'T INPUT ANYTHING
     if len(player_input) == 0:
         print('Please choose a direction')
-        game_loop()
 
     if len(player_input) == 1:
-        if player_input == 'q':
+        if player_input[0] == 'q':
             print('You have quit the game. See ya next time!')
-        elif player_input == 'n':
-            player.curr_location = player.curr_location.n_to
-            game_loop()
-        elif player_input == 's':
-            player.curr_location = player.curr_location.s_to
-            game_loop()
-        elif player_input == 'e':
-            player.curr_location = player.curr_location.e_to
-            game_loop()
-        elif player_input == 'w':
-            player.curr_location = player.curr_location.w_to
-            game_loop()
-        else:
-            print('You can\'t go that direction!')
+            playing = False
+        elif player_input[0] == 'n':
+            try_direction(player, player_input[0])
+        elif player_input[0] == 's':
+            try_direction(player, player_input[0])
+        elif player_input[0] == 'e':
+            try_direction(player, player_input[0])
+        elif player_input[0] == 'w':
+            try_direction(player, player_input[0])
+        elif player_input[0] == 'i':
+            player.check_inv()
 
-
-game_loop()
-
-# print(room['outside'])
+    if len(player_input) > 1:
+        if player_input[0] == 'take':
+            # print(player_input)
+            for item in player.curr_location.items:
+                if player_input[1] == item:
+                    player.take_item(item)
+                    player.curr_location.remove_item(item)
+                    print(player.curr_location.items, player.inventory)
