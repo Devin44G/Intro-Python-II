@@ -1,8 +1,8 @@
-from room import Room
 from player import Player
+from item import Item
+from room import Room
 
-# Declare all the rooms
-
+# Declaring all the rooms:
 room = {
     'outside':  Room("Outside Cave Entrance",
                      "North of you, the cave mount beckons"),
@@ -22,10 +22,20 @@ chamber! Sadly, it has already been completely emptied by
 earlier adventurers. The only exit is to the south."""),
 }
 
-room['outside'].add_item('sword')
+# Declaring items:
+# item = {
+#     'iron sword': Item('Iron Sword', 'A simple, but sturdy iron sword'),
+#     'old broom': Item('Old Broom', 'A broom, dustier even than this place'),
+#     'canteen': Item('Canteen', 'A canteen. Good for holding water')
+# }
+iron_sword = Item('sword', 'A simple, but sturdy iron sword')
+old_broom = Item('broom', 'A broom, dustier even than this place')
 
-# Link rooms together
+# Adding items to rooms:
+room['outside'].add_item(iron_sword.item)
+room['foyer'].add_item(old_broom)
 
+# Linking rooms together:
 room['outside'].n_to = room['foyer']
 room['foyer'].s_to = room['outside']
 room['foyer'].n_to = room['overlook']
@@ -35,10 +45,11 @@ room['narrow'].w_to = room['foyer']
 room['narrow'].n_to = room['treasure']
 room['treasure'].s_to = room['narrow']
 
-
+# Setting player location
 player = Player(room['outside'])
 
 
+# Checking if a direction is valid or not
 def try_direction(player, direction):
     attr = direction + '_to'
 
@@ -53,7 +64,7 @@ playing = True
 
 while playing:
     # PRINTS PLAYER'S CURRENT LOCATION EACH TIME LOOP IN INVOKED
-    print(f'\n {player.curr_location.description} \n')
+    print(f'\n {player.curr_location.description} {player.curr_location} \n')
 
     # WAITING FOR PLAYER INPUT
     player_input = input(
@@ -81,12 +92,17 @@ while playing:
             try_direction(player, player_input[0])
         elif player_input[0] == 'i':
             player.check_inv()
+        if player_input[0] == 'search':
+            if player.curr_location.items == []:
+                print('You did not find anything here.')
+            else:
+                print(player.curr_location.items)
 
     if len(player_input) > 1:
+
         if player_input[0] == 'take':
-            # print(player_input)
             for item in player.curr_location.items:
-                if player_input[1] == item:
+                if player_input[1] == item[0]:
                     player.take_item(item)
                     player.curr_location.remove_item(item)
                     print(player.curr_location.items, player.inventory)

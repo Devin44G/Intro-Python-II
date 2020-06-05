@@ -3,10 +3,10 @@
 class Room:
     """docstring for Room."""
 
-    def __init__(self, name, description, items=[]):
+    def __init__(self, name, description):
         self.name = name
         self.description = description
-        self.items = items
+        self.items = []
 
     def __str__(self):
         return f'Location: {self.name} \nDescription: {self.description} \n Items: {self.items}'
